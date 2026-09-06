@@ -4,10 +4,10 @@ namespace Alpha.Models
 {
     public static class AppState
     {
-        private static User _currentUser;
+        private static User? _currentUser;
         private static bool _isInitialized = false;
 
-        public static User CurrentUser
+        public static User? CurrentUser
         {
             get { return _currentUser; }
             set
@@ -27,7 +27,7 @@ namespace Alpha.Models
 
         public static bool HasPermission(params string[] allowedRoles)
         {
-            if (!IsLoggedIn) return false;
+            if (!IsLoggedIn || CurrentUser == null) return false;
 
             foreach (var role in allowedRoles)
             {

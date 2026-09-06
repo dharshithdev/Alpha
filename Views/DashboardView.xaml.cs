@@ -22,14 +22,17 @@ namespace Alpha.Views
 
             // Setup UI based on user
             var user = AppState.CurrentUser;
-            UserNameText.Text = user.FullName;
-            UserRoleText.Text = $"Role: {user.Role}";
-            WelcomeText.Text = $"Welcome, {user.FullName}!";
-            RoleText.Text = $"You are logged in as: {user.Role}";
+            if (user != null)
+            {
+                UserNameText.Text = user.FullName;
+                UserRoleText.Text = $"Role: {user.Role}";
+                WelcomeText.Text = $"Welcome, {user.FullName}!";
+                RoleText.Text = $"You are logged in as: {user.Role}";
 
-            // Set role badge
-            RoleBadgeText.Text = user.Role;
-            SetRoleBadgeColor(user.Role);
+                // Set role badge
+                RoleBadgeText.Text = user.Role;
+                SetRoleBadgeColor(user.Role);
+            }
 
             // Setup role-based access
             SetupRoleBasedAccess();
@@ -59,7 +62,7 @@ namespace Alpha.Views
 
         private void SetupRoleBasedAccess()
         {
-            var role = AppState.CurrentUser.Role;
+            var role = AppState.CurrentUserRole;
 
             // Set default visibility
             ProductsBtn.Visibility = Visibility.Collapsed;
@@ -143,25 +146,17 @@ Select a feature from the sidebar to get started.";
 
         private void ProductsBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetActiveButton(ProductsBtn);
-            ContentText.Text = @"
-📦 PRODUCT MANAGEMENT
-
-Product Management Page (Coming Soon!)
-
-Features:
-• View all products
-• Add new products
-• Edit product details
-• Delete products
-• Scan barcodes
-• Set prices
-• Manage categories
-
-This page will be accessible to:
-✅ Manager
-✅ Inventory Staff
-❌ Cashier";
+            try
+            {
+                var productView = new ProductView();
+                productView.Owner = this;
+                productView.ShowDialog();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show($"Error opening Products: {ex.Message}", "Error",
+                              MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void InventoryBtn_Click(object sender, RoutedEventArgs e)
