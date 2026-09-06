@@ -1,0 +1,25 @@
+## Visual Studio temporary files and caches
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Build outputs (Compiled binaries)
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+
+## Visual Studio 2025/2026 solution index files
+.slnx/
+*.slnx.user
+
+## Rider / JetBrains / VS Code private configurations
+.idea/
+.vscode/
+
+## Operating System junk files
+Thumbs.db
+Desktop.ini
+.DS_Store
