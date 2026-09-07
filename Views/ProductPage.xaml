@@ -114,61 +114,7 @@
             <Style.Triggers>
                 <Trigger Property="IsFocused" Value="True">
                     <Setter Property="BorderBrush" Value="#2C3E8A"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!-- ComboBox Style -->
-        <Style x:Key="FormComboBox" TargetType="ComboBox">
-            <Setter Property="Height" Value="38"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Padding" Value="12,0"/>
-            <Setter Property="BorderBrush" Value="#E2E8F0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ComboBox">
-                        <Grid>
-                            <Border Background="{TemplateBinding Background}" 
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="8">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="30"/>
-                                    </Grid.ColumnDefinitions>
-                                    <ContentPresenter Grid.Column="0" 
-                                                      Content="{TemplateBinding SelectionBoxItem}"
-                                                      VerticalAlignment="Center"
-                                                      Margin="12,0"/>
-                                    <TextBlock Grid.Column="1" Text="▼" 
-                                               VerticalAlignment="Center" 
-                                               HorizontalAlignment="Center"
-                                               Foreground="#718096"
-                                               FontSize="10"/>
-                                </Grid>
-                            </Border>
-                            <Popup x:Name="PART_Popup" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
-                                <Border Background="White" 
-                                        BorderBrush="#E2E8F0" 
-                                        BorderThickness="1" 
-                                        CornerRadius="8"
-                                        MaxHeight="200">
-                                    <ScrollViewer>
-                                        <ItemsPresenter/>
-                                    </ScrollViewer>
-                                </Border>
-                            </Popup>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="#2C3E8A"/>
+                    <Setter Property="BorderThickness" Value="2"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -217,8 +163,21 @@
                          TextChanged="SearchBox_TextChanged"
                          ToolTip="Search by name, barcode, or category"/>
 
-                <ComboBox x:Name="CategoryFilter" Grid.Column="1" Style="{StaticResource FormComboBox}" 
-                          Margin="10,0" SelectionChanged="CategoryFilter_SelectionChanged"/>
+                <!-- SIMPLE WORKING COMBOBOX -->
+                <ComboBox x:Name="CategoryFilter" 
+                          Grid.Column="1" 
+                          Width="200" 
+                          Height="38" 
+                          Margin="10,0" 
+                          SelectionChanged="CategoryFilter_SelectionChanged"
+                          Background="White"
+                          BorderBrush="#E2E8F0"
+                          BorderThickness="1"
+                          FontSize="13"
+                          Foreground="#2D3748"
+                          VerticalContentAlignment="Center"
+                          Padding="12,0"
+                          Cursor="Hand"/>
 
                 <Button x:Name="ClearSearchBtn" Grid.Column="2" Content="✕ Clear" 
                         Style="{StaticResource PrimaryButton}" Background="#718096" 
@@ -226,7 +185,7 @@
             </Grid>
         </Border>
 
-        <!-- Products DataGrid - NO GRID LINES -->
+        <!-- Products DataGrid -->
         <DataGrid x:Name="ProductsGrid" Grid.Row="2" 
                   AutoGenerateColumns="False"
                   HeadersVisibility="Column"
@@ -243,8 +202,7 @@
                   VerticalGridLinesBrush="Transparent">
 
             <DataGrid.Columns>
-                <!-- ID -->
-                <DataGridTextColumn Header="#" Binding="{Binding Id}" Width="45" IsReadOnly="True">
+                <DataGridTextColumn Header="#" Binding="{Binding Id}" Width="1*" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -253,8 +211,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <!-- Barcode -->
-                <DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="100" IsReadOnly="True">
+                <DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="2*" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -263,8 +220,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <!-- Product Name -->
-                <DataGridTextColumn Header="Product" Binding="{Binding Name}" Width="150" IsReadOnly="True">
+                <DataGridTextColumn Header="Product" Binding="{Binding Name}" Width="5*" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -274,8 +230,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <!-- Category -->
-                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="100" IsReadOnly="True">
+                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="2*" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -283,8 +238,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <!-- Price -->
-                <DataGridTextColumn Header="Price" Binding="{Binding SellingPrice, StringFormat=C}" Width="90" IsReadOnly="True">
+                <DataGridTextColumn Header="Price" Binding="{Binding SellingPrice, StringFormat=C}" Width="1.5*" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -295,8 +249,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <!-- Quantity -->
-                <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="55" IsReadOnly="True">
+                <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="1*" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -305,8 +258,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <!-- Status -->
-                <DataGridTemplateColumn Header="Status" Width="110">
+                <DataGridTemplateColumn Header="Status" Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock VerticalAlignment="Center" 
@@ -334,8 +286,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Actions -->
-                <DataGridTemplateColumn Header="Actions" Width="150">
+                <DataGridTemplateColumn Header="Actions" Width="3*" MinWidth="120">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">

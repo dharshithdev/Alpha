@@ -19,7 +19,6 @@ namespace Alpha.Views
             {
                 InitializeComponent();
 
-                // Check permissions
                 if (!AppState.HasPermission(UserRoles.Manager, UserRoles.Inventory))
                 {
                     MessageBox.Show("Access Denied! Only Managers and Inventory Staff can manage products.",
@@ -27,10 +26,7 @@ namespace Alpha.Views
                     return;
                 }
 
-                // Initialize service
                 _productService = new ProductService();
-
-                // Load products
                 LoadProducts();
                 LoadCategories();
                 UpdateUIForRole();
@@ -49,6 +45,9 @@ namespace Alpha.Views
                 AddBtn.IsEnabled = false;
                 AddBtn.Content = "🔒 View Only";
             }
+
+            // CRITICAL: Make sure CategoryFilter is enabled
+            CategoryFilter.IsEnabled = true;
         }
 
         private void LoadProducts()
@@ -78,7 +77,7 @@ namespace Alpha.Views
                 CategoryFilter.Items.Add("All Categories");
 
                 var categories = _productService.GetAllCategories() ?? new List<string>();
-                foreach (var category in categories)
+                foreach (string category in categories)
                 {
                     if (!string.IsNullOrEmpty(category))
                     {
@@ -87,6 +86,9 @@ namespace Alpha.Views
                 }
 
                 CategoryFilter.SelectedIndex = 0;
+
+                // Make sure it's enabled after loading
+                CategoryFilter.IsEnabled = true;
             }
             catch (Exception ex)
             {
@@ -98,12 +100,12 @@ namespace Alpha.Views
         {
             try
             {
-                string searchTerm = SearchBox.Text?.Trim().ToLower() ?? "";
+                string searchTerm = SearchBox.Text?.Trim().ToLower() ?? string.Empty;
                 string selectedCategory = CategoryFilter.SelectedItem?.ToString() ?? "All Categories";
 
                 var filtered = _allProducts ?? new List<Product>();
 
-                // Step 1: Apply search filter
+                // Apply search filter
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
                     filtered = filtered.Where(p =>
@@ -113,7 +115,7 @@ namespace Alpha.Views
                     ).ToList();
                 }
 
-                // Step 2: Apply category filter - ONLY if NOT "All Categories"
+                // Apply category filter - ONLY if NOT "All Categories"
                 if (selectedCategory != "All Categories" && !string.IsNullOrEmpty(selectedCategory))
                 {
                     filtered = filtered.Where(p =>
@@ -150,6 +152,7 @@ namespace Alpha.Views
                 if (dialog.ShowDialog() == true)
                 {
                     LoadProducts();
+                    FilterProducts();
                 }
             }
             catch (Exception ex)
@@ -176,7 +179,7 @@ namespace Alpha.Views
                 int productId = Convert.ToInt32(button.Tag);
                 if (_productService == null) return;
 
-                var product = _productService.GetProductById(productId);
+                Product product = _productService.GetProductById(productId);
                 if (product == null)
                 {
                     MessageBox.Show("Product not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -189,6 +192,7 @@ namespace Alpha.Views
                 if (dialog.ShowDialog() == true)
                 {
                     LoadProducts();
+                    FilterProducts();
                 }
             }
             catch (Exception ex)
@@ -214,7 +218,7 @@ namespace Alpha.Views
 
                 int productId = Convert.ToInt32(button.Tag);
 
-                var result = MessageBox.Show("Are you sure you want to delete this product?\nThis action cannot be undone!",
+                MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this product?\nThis action cannot be undone!",
                                             "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
                 if (result == MessageBoxResult.Yes && _productService != null)
@@ -224,6 +228,7 @@ namespace Alpha.Views
                         MessageBox.Show("Product deleted successfully.", "Success",
                                       MessageBoxButton.OK, MessageBoxImage.Information);
                         LoadProducts();
+                        FilterProducts();
                     }
                 }
             }
@@ -241,12 +246,13 @@ namespace Alpha.Views
 
         private void CategoryFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // REMOVED the MessageBox - now it just filters
             FilterProducts();
         }
 
         private void ClearSearchBtn_Click(object sender, RoutedEventArgs e)
         {
-            SearchBox.Text = "";
+            SearchBox.Text = string.Empty;
             CategoryFilter.SelectedIndex = 0;
             FilterProducts();
         }
@@ -255,6 +261,7 @@ namespace Alpha.Views
         {
             LoadProducts();
             LoadCategories();
+            FilterProducts();
         }
     }
 }
