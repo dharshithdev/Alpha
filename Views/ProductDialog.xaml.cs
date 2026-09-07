@@ -1,9 +1,8 @@
-﻿using Alpha.Models;
-using Alpha.Services;
-using System;
+﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
+using Alpha.Models;
+using Alpha.Services;
 
 namespace Alpha.Views
 {
@@ -18,18 +17,21 @@ namespace Alpha.Views
             InitializeComponent();
             _productService = new ProductService();
 
+            // Allow moving the window by dragging
+            this.MouseDown += (s, e) => { if (e.LeftButton == MouseButtonState.Pressed) DragMove(); };
+
             if (product != null)
             {
                 _isEditMode = true;
                 _product = product;
-                TitleText.Text = "Edit Product";
+                TitleText.Text = "✏️ Edit Product";
                 LoadProductData();
             }
             else
             {
                 _isEditMode = false;
                 _product = new Product();
-                TitleText.Text = "Add New Product";
+                TitleText.Text = "➕ Add New Product";
             }
         }
 
@@ -38,7 +40,6 @@ namespace Alpha.Views
             BarcodeBox.Text = _product.Barcode;
             NameBox.Text = _product.Name;
             CategoryBox.Text = _product.Category;
-            DescriptionBox.Text = _product.Description;
             PurchasePriceBox.Text = _product.PurchasePrice.ToString("0.00");
             SellingPriceBox.Text = _product.SellingPrice.ToString("0.00");
             QuantityBox.Text = _product.Quantity.ToString();
@@ -93,7 +94,7 @@ namespace Alpha.Views
                 _product.Barcode = string.IsNullOrWhiteSpace(BarcodeBox.Text) ? null : BarcodeBox.Text.Trim();
                 _product.Name = NameBox.Text.Trim();
                 _product.Category = string.IsNullOrWhiteSpace(CategoryBox.Text) ? null : CategoryBox.Text.Trim();
-                _product.Description = string.IsNullOrWhiteSpace(DescriptionBox.Text) ? null : DescriptionBox.Text.Trim();
+                _product.Description = null; // No description field
                 _product.PurchasePrice = purchasePrice;
                 _product.SellingPrice = sellingPrice;
                 _product.Quantity = quantity;
@@ -101,7 +102,6 @@ namespace Alpha.Views
 
                 if (_isEditMode)
                 {
-                    // Update existing product
                     if (_productService.UpdateProduct(_product))
                     {
                         MessageBox.Show("Product updated successfully!", "Success",
@@ -116,7 +116,6 @@ namespace Alpha.Views
                 }
                 else
                 {
-                    // Add new product
                     int newId = _productService.AddProduct(_product);
                     if (newId > 0)
                     {
@@ -154,12 +153,16 @@ namespace Alpha.Views
             ErrorText.Visibility = Visibility.Collapsed;
         }
 
-        // Auto-select text on focus
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        // Enter key triggers Save
+        private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (sender is TextBox textBox)
+            if (e.Key == Key.Enter)
             {
-                textBox.SelectAll();
+                SaveBtn_Click(sender, e);
+            }
+            else if (e.Key == Key.Escape)
+            {
+                CancelBtn_Click(sender, e);
             }
         }
 

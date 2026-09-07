@@ -1,4 +1,6 @@
 ﻿using Alpha.Models;
+using Alpha.Views;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -37,7 +39,7 @@ namespace Alpha.Views
             // Setup role-based access
             SetupRoleBasedAccess();
 
-            // Show dashboard content
+            // Show dashboard content by default
             ShowDashboard();
         }
 
@@ -75,7 +77,6 @@ namespace Alpha.Views
             switch (role)
             {
                 case "Manager":
-                    // Show ALL features
                     ProductsBtn.Visibility = Visibility.Visible;
                     InventoryBtn.Visibility = Visibility.Visible;
                     InvoicesBtn.Visibility = Visibility.Visible;
@@ -85,13 +86,11 @@ namespace Alpha.Views
                     break;
 
                 case "Inventory":
-                    // Show only inventory and products
                     ProductsBtn.Visibility = Visibility.Visible;
                     InventoryBtn.Visibility = Visibility.Visible;
                     break;
 
                 case "Cashier":
-                    // Show only sales and customers
                     InvoicesBtn.Visibility = Visibility.Visible;
                     CustomersBtn.Visibility = Visibility.Visible;
                     break;
@@ -116,27 +115,37 @@ namespace Alpha.Views
             }
         }
 
+        // ========== NAVIGATION METHODS ==========
+
         private void ShowDashboard()
         {
             SetActiveButton(DashboardBtn);
-            ContentText.Text = @"
-📊 DASHBOARD OVERVIEW
 
-Welcome to Alpha Billing System!
+            // Create a simple dashboard content
+            var dashboardContent = new StackPanel
+            {
+                Margin = new Thickness(25),
+                VerticalAlignment = VerticalAlignment.Top
+            };
 
-Quick Stats (Coming Soon):
-• Today's Sales: $0.00
-• Total Customers: 0
-• Products in Stock: 0
-• Pending Invoices: 0
+            dashboardContent.Children.Add(new TextBlock
+            {
+                Text = "📊 Dashboard Overview",
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2D3748")),
+                Margin = new Thickness(0, 0, 0, 15)
+            });
 
-Low Stock Alerts:
-No products with low stock.
+            dashboardContent.Children.Add(new TextBlock
+            {
+                Text = "Welcome to Alpha Billing System!\n\nQuick Stats (Coming Soon):\n• Today's Sales: $0.00\n• Total Customers: 0\n• Products in Stock: 0\n• Pending Invoices: 0\n\nLow Stock Alerts:\nNo products with low stock.\n\nRecent Activity:\nNo recent activity.\n\nSelect a feature from the sidebar to get started.",
+                FontSize = 14,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4A5568")),
+                TextWrapping = TextWrapping.Wrap
+            });
 
-Recent Activity:
-No recent activity.
-
-Select a feature from the sidebar to get started.";
+            MainContent.Content = dashboardContent;
         }
 
         private void DashboardBtn_Click(object sender, RoutedEventArgs e)
@@ -148,11 +157,13 @@ Select a feature from the sidebar to get started.";
         {
             try
             {
-                var productView = new ProductView();
-                productView.Owner = this;
-                productView.ShowDialog();
+                SetActiveButton(ProductsBtn);
+
+                // Load Product Page in the ContentControl
+                var productPage = new ProductPage();
+                MainContent.Content = productPage;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show($"Error opening Products: {ex.Message}", "Error",
                               MessageBoxButton.OK, MessageBoxImage.Error);
@@ -162,70 +173,70 @@ Select a feature from the sidebar to get started.";
         private void InventoryBtn_Click(object sender, RoutedEventArgs e)
         {
             SetActiveButton(InventoryBtn);
-            ContentText.Text = @"
-📋 INVENTORY MANAGEMENT
 
-Stock Management Page (Coming Soon!)
-
-Features:
-• Receive new stock (Stock In)
-• Remove stock (Stock Out)
-• Update quantities
-• View stock history
-• Low stock alerts
-• Stock takes
-• Remove expired items
-
-This page will be accessible to:
-✅ Manager
-✅ Inventory Staff
-❌ Cashier";
+            var content = new StackPanel { Margin = new Thickness(25) };
+            content.Children.Add(new TextBlock
+            {
+                Text = "📋 Inventory Management",
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2D3748")),
+                Margin = new Thickness(0, 0, 0, 15)
+            });
+            content.Children.Add(new TextBlock
+            {
+                Text = "Stock Management Page (Coming Soon!)\n\nFeatures:\n• Receive new stock (Stock In)\n• Remove stock (Stock Out)\n• Update quantities\n• View stock history\n• Low stock alerts\n• Stock takes\n• Remove expired items",
+                FontSize = 14,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4A5568")),
+                TextWrapping = TextWrapping.Wrap
+            });
+            MainContent.Content = content;
         }
 
         private void InvoicesBtn_Click(object sender, RoutedEventArgs e)
         {
             SetActiveButton(InvoicesBtn);
-            ContentText.Text = @"
-🧾 INVOICE MANAGEMENT
 
-Invoice Page (Coming Soon!)
-
-Features:
-• Create new invoice
-• Scan barcodes
-• View invoice history
-• Print invoices
-• Record payments
-• Track overdue invoices
-• Customer balance updates
-
-This page will be accessible to:
-✅ Manager
-✅ Cashier
-❌ Inventory Staff";
+            var content = new StackPanel { Margin = new Thickness(25) };
+            content.Children.Add(new TextBlock
+            {
+                Text = "🧾 Invoice Management",
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2D3748")),
+                Margin = new Thickness(0, 0, 0, 15)
+            });
+            content.Children.Add(new TextBlock
+            {
+                Text = "Invoice Page (Coming Soon!)\n\nFeatures:\n• Create new invoice\n• Scan barcodes\n• View invoice history\n• Print invoices\n• Record payments\n• Track overdue invoices\n• Customer balance updates",
+                FontSize = 14,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4A5568")),
+                TextWrapping = TextWrapping.Wrap
+            });
+            MainContent.Content = content;
         }
 
         private void CustomersBtn_Click(object sender, RoutedEventArgs e)
         {
             SetActiveButton(CustomersBtn);
-            ContentText.Text = @"
-👤 CUSTOMER MANAGEMENT
 
-Customer Page (Coming Soon!)
-
-Features:
-• View customer list
-• Add new customers
-• Edit customer details
-• Delete customers
-• View purchase history
-• Track balances
-• Customer search
-
-This page will be accessible to:
-✅ Manager
-✅ Cashier
-❌ Inventory Staff";
+            var content = new StackPanel { Margin = new Thickness(25) };
+            content.Children.Add(new TextBlock
+            {
+                Text = "👤 Customer Management",
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2D3748")),
+                Margin = new Thickness(0, 0, 0, 15)
+            });
+            content.Children.Add(new TextBlock
+            {
+                Text = "Customer Page (Coming Soon!)\n\nFeatures:\n• View customer list\n• Add new customers\n• Edit customer details\n• Delete customers\n• View purchase history\n• Track balances\n• Customer search",
+                FontSize = 14,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4A5568")),
+                TextWrapping = TextWrapping.Wrap
+            });
+            MainContent.Content = content;
         }
 
         private void ReportsBtn_Click(object sender, RoutedEventArgs e)
@@ -239,22 +250,24 @@ This page will be accessible to:
             }
 
             SetActiveButton(ReportsBtn);
-            ContentText.Text = @"
-📈 REPORTS DASHBOARD
 
-Reports Page (Coming Soon!)
-
-Available Reports:
-• Daily Sales Report
-• Weekly Sales Summary
-• Monthly Revenue
-• Top Selling Products
-• Customer Purchase History
-• Stock Value Report
-• Profit & Loss Statement
-• Tax Report
-
-⚠️ Access: Manager Only";
+            var content = new StackPanel { Margin = new Thickness(25) };
+            content.Children.Add(new TextBlock
+            {
+                Text = "📈 Reports Dashboard",
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2D3748")),
+                Margin = new Thickness(0, 0, 0, 15)
+            });
+            content.Children.Add(new TextBlock
+            {
+                Text = "Reports Page (Coming Soon!)\n\nAvailable Reports:\n• Daily Sales Report\n• Weekly Sales Summary\n• Monthly Revenue\n• Top Selling Products\n• Customer Purchase History\n• Stock Value Report\n• Profit & Loss Statement\n• Tax Report\n\n⚠️ Access: Manager Only",
+                FontSize = 14,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4A5568")),
+                TextWrapping = TextWrapping.Wrap
+            });
+            MainContent.Content = content;
         }
 
         private void UsersBtn_Click(object sender, RoutedEventArgs e)
@@ -268,25 +281,24 @@ Available Reports:
             }
 
             SetActiveButton(UsersBtn);
-            ContentText.Text = @"
-👥 USER MANAGEMENT
 
-User Management Page (Coming Soon!)
-
-Features:
-• View all users
-• Add new users
-• Edit user details
-• Assign roles
-• Enable/Disable users
-• Reset passwords
-
-Roles Available:
-1. Manager - Full access
-2. Inventory - Stock management
-3. Cashier - Sales only
-
-⚠️ Access: Manager Only";
+            var content = new StackPanel { Margin = new Thickness(25) };
+            content.Children.Add(new TextBlock
+            {
+                Text = "👥 User Management",
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2D3748")),
+                Margin = new Thickness(0, 0, 0, 15)
+            });
+            content.Children.Add(new TextBlock
+            {
+                Text = "User Management Page (Coming Soon!)\n\nFeatures:\n• View all users\n• Add new users\n• Edit user details\n• Assign roles\n• Enable/Disable users\n• Reset passwords\n\nRoles Available:\n1. Manager - Full access\n2. Inventory - Stock management\n3. Cashier - Sales only\n\n⚠️ Access: Manager Only",
+                FontSize = 14,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4A5568")),
+                TextWrapping = TextWrapping.Wrap
+            });
+            MainContent.Content = content;
         }
 
         private void LogoutBtn_Click(object sender, RoutedEventArgs e)
@@ -298,14 +310,9 @@ Roles Available:
 
             if (result == MessageBoxResult.Yes)
             {
-                // Clear user state
                 AppState.Logout();
-
-                // Open login window
                 var login = new MainWindow();
                 login.Show();
-
-                // Close dashboard
                 this.Close();
             }
         }

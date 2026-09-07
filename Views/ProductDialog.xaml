@@ -2,28 +2,34 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Add/Edit Product"
-        Height="550" Width="500"
+        Height="520" Width="550"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
-        Background="White">
+        Background="#F7FAFC"
+        WindowStyle="None"
+        AllowsTransparency="True">
 
     <Window.Resources>
-        <!-- Reuse styles from ProductView -->
-        <Style x:Key="FormTextBox" TargetType="TextBox">
-            <Setter Property="Height" Value="36"/>
+        <!-- Drop Shadow for the dialog -->
+        <DropShadowEffect x:Key="DialogShadow" BlurRadius="20" Opacity="0.15" ShadowDepth="0"/>
+
+        <!-- Modern TextBox Style -->
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="40"/>
             <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="Padding" Value="14,0"/>
             <Setter Property="BorderBrush" Value="#E2E8F0"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="White"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
                         <Border Background="{TemplateBinding Background}" 
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6">
+                                CornerRadius="8">
                             <ScrollViewer x:Name="PART_ContentHost" 
                                           Margin="{TemplateBinding Padding}"
                                           VerticalContentAlignment="Center"/>
@@ -34,25 +40,28 @@
             <Style.Triggers>
                 <Trigger Property="IsFocused" Value="True">
                     <Setter Property="BorderBrush" Value="#2C3E8A"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#A0AEC0"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="FormNumericBox" TargetType="TextBox" BasedOn="{StaticResource FormTextBox}"/>
-
+        <!-- Modern Button Styles -->
         <Style x:Key="PrimaryButton" TargetType="Button">
             <Setter Property="Background" Value="#2C3E8A"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Height" Value="38"/>
-            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="30,0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -62,100 +71,191 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#1E2F6F"/>
                 </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="CancelButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-            <Setter Property="Background" Value="#E2E8F0"/>
-            <Setter Property="Foreground" Value="#4A5568"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#D0D5DD"/>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#152050"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#A0AEC0"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="#E2E8F0"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#CBD5E0"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#A0AEC0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Label Style -->
         <Style TargetType="Label">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="#4A5568"/>
-            <Setter Property="Margin" Value="0,0,0,5"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
         </Style>
     </Window.Resources>
 
-    <Grid Margin="25">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <!-- Main Container with Shadow -->
+    <Border Background="White" CornerRadius="12" Effect="{StaticResource DialogShadow}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+            <!-- Header with Close Button -->
+            <Border Grid.Row="0" Background="#2C3E8A" CornerRadius="12,12,0,0" Padding="20,15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-        <!-- Title -->
-        <TextBlock Grid.ColumnSpan="2" x:Name="TitleText" Text="Add New Product" 
-                   FontSize="18" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,0,20"/>
+                    <StackPanel>
+                        <TextBlock x:Name="TitleText" Text="Add New Product" 
+                                   FontSize="20" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="Fill in the product details below" 
+                                   FontSize="12" Foreground="#A8B5E0" Margin="0,3,0,0"/>
+                    </StackPanel>
 
-        <!-- Barcode -->
-        <Label Grid.Row="1" Grid.Column="0" Content="Barcode" VerticalAlignment="Center" Margin="0,0,10,0"/>
-        <TextBox Grid.Row="1" Grid.Column="1" x:Name="BarcodeBox" Style="{StaticResource FormTextBox}"
-                 ToolTip="Scan barcode or enter manually"/>
+                    <!-- Close Button -->
+                    <Button Grid.Column="1" Content="✕" Click="CancelBtn_Click"
+                            Background="Transparent" Foreground="White" 
+                            BorderThickness="0" Cursor="Hand" FontSize="18"
+                            Width="30" Height="30" VerticalAlignment="Top"
+                            ToolTip="Close">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#E53E3E"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
+            </Border>
 
-        <!-- Name -->
-        <Label Grid.Row="2" Grid.Column="0" Content="Product Name *" VerticalAlignment="Center" Margin="0,0,10,5"/>
-        <TextBox Grid.Row="2" Grid.Column="1" x:Name="NameBox" Style="{StaticResource FormTextBox}"
-                 ToolTip="Enter product name (required)"/>
+            <!-- Form Content -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" 
+                          Padding="25,20" Background="White">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-        <!-- Category -->
-        <Label Grid.Row="3" Grid.Column="0" Content="Category" VerticalAlignment="Center" Margin="0,0,10,5"/>
-        <TextBox Grid.Row="3" Grid.Column="1" x:Name="CategoryBox" Style="{StaticResource FormTextBox}"
-                 ToolTip="Product category (e.g., Electronics, Food)"/>
+                    <!-- Barcode -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                        <Label Content="Barcode" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBox x:Name="BarcodeBox" Style="{StaticResource ModernTextBox}"
+                                 ToolTip="Scan barcode or enter manually"/>
+                    </StackPanel>
 
-        <!-- Description -->
-        <Label Grid.Row="4" Grid.Column="0" Content="Description" VerticalAlignment="Top" Margin="0,0,10,5"/>
-        <TextBox Grid.Row="4" Grid.Column="1" x:Name="DescriptionBox" Style="{StaticResource FormTextBox}" 
-                 Height="60" TextWrapping="Wrap" AcceptsReturn="True"
-                 ToolTip="Product description (optional)"/>
+                    <!-- Name -->
+                    <StackPanel Grid.Row="1" Margin="0,0,0,15">
+                        <Label Content="Product Name *" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBox x:Name="NameBox" Style="{StaticResource ModernTextBox}"
+                                 ToolTip="Enter product name (required)"/>
+                    </StackPanel>
 
-        <!-- Purchase Price -->
-        <Label Grid.Row="5" Grid.Column="0" Content="Purchase Price" VerticalAlignment="Center" Margin="0,0,10,5"/>
-        <TextBox Grid.Row="5" Grid.Column="1" x:Name="PurchasePriceBox" Style="{StaticResource FormTextBox}"
-                 ToolTip="Cost price (how much you paid)"/>
+                    <!-- Category -->
+                    <StackPanel Grid.Row="2" Margin="0,0,0,15">
+                        <Label Content="Category" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBox x:Name="CategoryBox" Style="{StaticResource ModernTextBox}"
+                                 ToolTip="Product category (e.g., Electronics, Food)"/>
+                    </StackPanel>
 
-        <!-- Selling Price -->
-        <Label Grid.Row="6" Grid.Column="0" Content="Selling Price *" VerticalAlignment="Center" Margin="0,0,10,5"/>
-        <TextBox Grid.Row="6" Grid.Column="1" x:Name="SellingPriceBox" Style="{StaticResource FormTextBox}"
-                 ToolTip="Selling price (required)"/>
+                    <!-- Divider -->
+                    <Border Grid.Row="3" Height="1" Background="#E2E8F0" Margin="0,5,0,15"/>
 
-        <!-- Quantity -->
-        <Label Grid.Row="7" Grid.Column="0" Content="Quantity *" VerticalAlignment="Center" Margin="0,0,10,5"/>
-        <TextBox Grid.Row="7" Grid.Column="1" x:Name="QuantityBox" Style="{StaticResource FormTextBox}" Text="0"
-                 ToolTip="Current stock quantity (required)"/>
+                    <!-- Pricing Row -->
+                    <Grid Grid.Row="4" Margin="0,0,0,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-        <!-- Min Stock -->
-        <Label Grid.Row="8" Grid.Column="0" Content="Min Stock Alert" VerticalAlignment="Center" Margin="0,0,10,5"/>
-        <TextBox Grid.Row="8" Grid.Column="1" x:Name="MinStockBox" Style="{StaticResource FormTextBox}" Text="10"
-                 ToolTip="Low stock alert level (default: 10)"/>
+                        <!-- Purchase Price -->
+                        <StackPanel Grid.Column="0">
+                            <Label Content="Purchase Price" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                            <TextBox x:Name="PurchasePriceBox" Style="{StaticResource ModernTextBox}"
+                                     ToolTip="Cost price (how much you paid)"/>
+                        </StackPanel>
 
-        <!-- Error Message -->
-        <TextBlock Grid.Row="9" Grid.ColumnSpan="2" x:Name="ErrorText" Foreground="#E53E3E" 
-                   FontSize="12" Margin="0,10,0,10" Visibility="Collapsed"/>
+                        <!-- Selling Price -->
+                        <StackPanel Grid.Column="2">
+                            <Label Content="Selling Price *" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                            <TextBox x:Name="SellingPriceBox" Style="{StaticResource ModernTextBox}"
+                                     ToolTip="Selling price (required)"/>
+                        </StackPanel>
+                    </Grid>
 
-        <!-- Buttons -->
-        <StackPanel Grid.Row="10" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button x:Name="SaveBtn" Content="💾 Save" Style="{StaticResource PrimaryButton}" Click="SaveBtn_Click" Margin="0,0,10,0"/>
-            <Button Content="✕ Cancel" Style="{StaticResource CancelButton}" Click="CancelBtn_Click"/>
-        </StackPanel>
-    </Grid>
+                    <!-- Quantity Row -->
+                    <Grid Grid.Row="5" Margin="0,0,0,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Quantity -->
+                        <StackPanel Grid.Column="0">
+                            <Label Content="Quantity *" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                            <TextBox x:Name="QuantityBox" Style="{StaticResource ModernTextBox}" Text="0"
+                                     ToolTip="Current stock quantity (required)"/>
+                        </StackPanel>
+
+                        <!-- Min Stock Alert -->
+                        <StackPanel Grid.Column="2">
+                            <Label Content="Min Stock Alert" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                            <TextBox x:Name="MinStockBox" Style="{StaticResource ModernTextBox}" Text="10"
+                                     ToolTip="Low stock alert level (default: 10)"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Error Message -->
+                    <TextBlock Grid.Row="6" x:Name="ErrorText" Foreground="#E53E3E" 
+                               FontSize="13" Margin="0,10,0,5" Visibility="Collapsed" 
+                               TextWrapping="Wrap"/>
+
+                    <!-- Spacer -->
+                    <Border Grid.Row="7" Height="10"/>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- Footer Buttons -->
+            <Border Grid.Row="2" Background="#F7FAFC" CornerRadius="0,0,12,12" Padding="20,15">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="SaveBtn" Content="💾 Save Product" Style="{StaticResource PrimaryButton}" 
+                            Click="SaveBtn_Click" Margin="0,0,10,0" Width="140"/>
+                    <Button Content="✕ Cancel" Style="{StaticResource SecondaryButton}" 
+                            Click="CancelBtn_Click" Width="100"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
 </Window>

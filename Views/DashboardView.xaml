@@ -150,6 +150,7 @@
         </Border>
 
         <!-- Main Content -->
+        <!-- Main Content Area with ContentControl -->
         <Grid Grid.Column="1" Margin="25">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -176,12 +177,9 @@
                 </Grid>
             </Border>
 
-            <!-- Content Area -->
-            <Border Grid.Row="1" Style="{StaticResource Card}" Padding="25">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <TextBlock x:Name="ContentText" Text="Welcome to Alpha Billing System!" 
-                               FontSize="16" Foreground="#2D3748"/>
-                </ScrollViewer>
+            <!-- Content Area - THIS IS WHERE PAGES WILL LOAD -->
+            <Border Grid.Row="1" Style="{StaticResource Card}" Padding="0">
+                <ContentControl x:Name="MainContent" />
             </Border>
         </Grid>
     </Grid>
